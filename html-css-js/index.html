@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QuantiMeasure — Login</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="auth-page">
+    <!-- Background grid -->
+    <div class="bg-grid"></div>
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+
+    <main class="auth-container">
+      <!-- Brand -->
+      <header class="auth-brand">
+        <div class="brand-icon">
+          <svg
+            viewBox="0 0 40 40"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect
+              x="4"
+              y="4"
+              width="14"
+              height="14"
+              rx="2"
+              fill="var(--accent)"
+            />
+            <rect
+              x="22"
+              y="4"
+              width="14"
+              height="14"
+              rx="2"
+              fill="var(--accent)"
+              opacity="0.5"
+            />
+            <rect
+              x="4"
+              y="22"
+              width="14"
+              height="14"
+              rx="2"
+              fill="var(--accent)"
+              opacity="0.5"
+            />
+            <rect
+              x="22"
+              y="22"
+              width="14"
+              height="14"
+              rx="2"
+              fill="var(--accent)"
+            />
+          </svg>
+        </div>
+        <h1 class="brand-name">QuantiMeasure</h1>
+        <p class="brand-sub">Precision unit conversion platform</p>
+      </header>
+
+      <!-- Tab switcher -->
+      <div class="auth-tabs" role="tablist">
+        <button
+          class="tab-btn active"
+          id="tab-login"
+          role="tab"
+          aria-selected="true"
+          onclick="App.switchTab('login')"
+        >
+          Sign In
+        </button>
+        <button
+          class="tab-btn"
+          id="tab-register"
+          role="tab"
+          aria-selected="false"
+          onclick="App.switchTab('register')"
+        >
+          Register
+        </button>
+        <span class="tab-indicator" id="tab-indicator"></span>
+      </div>
+
+      <!-- Login Form -->
+      <section class="auth-form-wrap" id="form-login" aria-label="Login form">
+        <form class="auth-form" id="loginForm" novalidate>
+          <div class="field-group">
+            <label class="field-label" for="login-email">Email Address</label>
+            <div class="field-wrap">
+              <span class="field-icon">
+                <svg viewBox="0 0 20 20" fill="none">
+                  <path
+                    d="M2 5.5A1.5 1.5 0 013.5 4h13A1.5 1.5 0 0118 5.5v9a1.5 1.5 0 01-1.5 1.5h-13A1.5 1.5 0 012 14.5v-9z"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  />
+                  <path
+                    d="M2 6l8 5 8-5"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  />
+                </svg>
+              </span>
+              <input
+                type="email"
+                id="login-email"
+                name="email"
+                placeholder="you@example.com"
+                autocomplete="email"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="login-password">Password</label>
+            <div class="field-wrap">
+              <span class="field-icon">
+                <svg viewBox="0 0 20 20" fill="none">
+                  <rect
+                    x="4"
+                    y="9"
+                    width="12"
+                    height="9"
+                    rx="1.5"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  />
+                  <path
+                    d="M7 9V6.5a3 3 0 016 0V9"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  />
+                </svg>
+              </span>
+              <input
+                type="password"
+                id="login-password"
+                name="password"
+                placeholder="••••••••"
+                autocomplete="current-password"
+                required
+              />
+              <button
+                type="button"
+                class="toggle-pw"
+                aria-label="Toggle password"
+                onclick="App.togglePassword('login-password', this)"
+              >
+                <svg viewBox="0 0 20 20" fill="none">
+                  <path
+                    d="M2 10s3-6 8-6 8 6 8 6-3 6-8 6-8-6-8-6z"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  />
+                  <circle
+                    cx="10"
+                    cy="10"
+                    r="2.5"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-error hidden" id="login-error" role="alert"></div>
+
+          <button type="submit" class="btn-primary" id="loginBtn">
+            <span class="btn-text">Sign In</span>
+            <span class="btn-loader hidden"></span>
+          </button>
+        </form>
+      </section>
+
+      <!-- Register Form -->
+      <section
+        class="auth-form-wrap hidden"
+        id="form-register"
+        aria-label="Register form"
+      >
+        <form class="auth-form" id="registerForm" novalidate>
+          <div class="field-group">
+            <label class="field-label" for="reg-email">Email Address</label>
+            <div class="field-wrap">
+              <span class="field-icon">
+                <svg viewBox="0 0 20 20" fill="none">
+                  <path
+                    d="M2 5.5A1.5 1.5 0 013.5 4h13A1.5 1.5 0 0118 5.5v9a1.5 1.5 0 01-1.5 1.5h-13A1.5 1.5 0 012 14.5v-9z"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  />
+                  <path
+                    d="M2 6l8 5 8-5"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  />
+                </svg>
+              </span>
+              <input
+                type="email"
+                id="reg-email"
+                name="email"
+                placeholder="you@example.com"
+                autocomplete="email"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="reg-password">Password</label>
+            <div class="field-wrap">
+              <span class="field-icon">
+                <svg viewBox="0 0 20 20" fill="none">
+                  <rect
+                    x="4"
+                    y="9"
+                    width="12"
+                    height="9"
+                    rx="1.5"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  />
+                  <path
+                    d="M7 9V6.5a3 3 0 016 0V9"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  />
+                </svg>
+              </span>
+              <input
+                type="password"
+                id="reg-password"
+                name="password"
+                placeholder="min. 6 characters"
+                autocomplete="new-password"
+                required
+                minlength="6"
+              />
+              <button
+                type="button"
+                class="toggle-pw"
+                aria-label="Toggle password"
+                onclick="App.togglePassword('reg-password', this)"
+              >
+                <svg viewBox="0 0 20 20" fill="none">
+                  <path
+                    d="M2 10s3-6 8-6 8 6 8 6-3 6-8 6-8-6-8-6z"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  />
+                  <circle
+                    cx="10"
+                    cy="10"
+                    r="2.5"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-error hidden" id="register-error" role="alert"></div>
+          <div
+            class="form-success hidden"
+            id="register-success"
+            role="status"
+          ></div>
+
+          <button type="submit" class="btn-primary" id="registerBtn">
+            <span class="btn-text">Create Account</span>
+            <span class="btn-loader hidden"></span>
+          </button>
+        </form>
+      </section>
+    </main>
+
+    <footer class="auth-footer">
+      <span class="mono">QuantiMeasure v1.0</span> · Secure JWT Authentication
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>

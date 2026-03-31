@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QuantiMeasure — Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body class="dashboard-page">
+
+  <div class="bg-grid"></div>
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+
+  <!-- Sidebar Nav -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon small">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="4" y="4" width="14" height="14" rx="2" fill="var(--accent)"/>
+          <rect x="22" y="4" width="14" height="14" rx="2" fill="var(--accent)" opacity="0.5"/>
+          <rect x="4" y="22" width="14" height="14" rx="2" fill="var(--accent)" opacity="0.5"/>
+          <rect x="22" y="22" width="14" height="14" rx="2" fill="var(--accent)"/>
+        </svg>
+      </div>
+      <span class="brand-name">QuantiMeasure</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <p class="nav-label">Operations</p>
+      <button class="nav-item active" data-op="convert" onclick="Dashboard.setOperation('convert', this)">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M4 10h12M12 6l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Convert
+      </button>
+      <button class="nav-item" data-op="add" onclick="Dashboard.setOperation('add', this)">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Add
+      </button>
+      <button class="nav-item" data-op="subtract" onclick="Dashboard.setOperation('subtract', this)">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M4 10h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Subtract
+      </button>
+      <button class="nav-item" data-op="compare" onclick="Dashboard.setOperation('compare', this)">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M4 6h12M4 10h8M4 14h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Compare
+      </button>
+      <button class="nav-item" data-op="divide" onclick="Dashboard.setOperation('divide', this)">
+        <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="6" r="1.2" fill="currentColor"/><circle cx="10" cy="14" r="1.2" fill="currentColor"/><path d="M4 10h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Divide
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-chip">
+        <span class="user-avatar" id="userAvatar">U</span>
+        <span class="user-email mono" id="userEmail">user@app.com</span>
+      </div>
+      <button class="btn-logout" onclick="Dashboard.logout()" title="Logout">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M13 15l4-5-4-5M17 10H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M7 4H4a1 1 0 00-1 1v10a1 1 0 001 1h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- Mobile header -->
+  <header class="mobile-header">
+    <button class="hamburger" onclick="Dashboard.toggleSidebar()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <span class="brand-name">QuantiMeasure</span>
+    <button class="btn-logout-sm" onclick="Dashboard.logout()">
+      <svg viewBox="0 0 20 20" fill="none"><path d="M13 15l4-5-4-5M17 10H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+  </header>
+
+  <!-- Main content -->
+  <main class="dashboard-main">
+
+    <!-- Page header -->
+    <div class="page-header">
+      <div>
+        <h2 class="page-title" id="pageTitle">Unit Conversion</h2>
+        <p class="page-desc" id="pageDesc">Convert a value from one unit to its equivalent in another</p>
+      </div>
+      <div class="op-badge" id="opBadge">convert</div>
+    </div>
+
+    <!-- Conversion card -->
+    <div class="converter-card">
+      <form class="converter-form" id="converterForm" novalidate>
+
+        <!-- Measurement Type -->
+        <div class="type-selector">
+          <p class="field-label">Measurement Type</p>
+          <div class="type-pills" id="typePills">
+            <button type="button" class="pill active" data-type="LengthUnit" onclick="Dashboard.selectType('LengthUnit', this)">📏 Length</button>
+            <button type="button" class="pill" data-type="TemperatureUnit" onclick="Dashboard.selectType('TemperatureUnit', this)">🌡️ Temperature</button>
+            <button type="button" class="pill" data-type="VolumeUnit" onclick="Dashboard.selectType('VolumeUnit', this)">🧪 Volume</button>
+            <button type="button" class="pill" data-type="WeightUnit" onclick="Dashboard.selectType('WeightUnit', this)">⚖️ Weight</button>
+          </div>
+        </div>
+
+        <!-- Quantity inputs side by side -->
+        <div class="quantities-row">
+
+          <!-- THIS quantity -->
+          <div class="quantity-block">
+            <p class="qty-label">From (thisQuantity)</p>
+            <div class="qty-fields">
+              <div class="field-group">
+                <label class="field-label" for="thisValue">Value</label>
+                <div class="field-wrap">
+                  <input type="number" id="thisValue" placeholder="e.g. 1" step="any" required />
+                </div>
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="thisUnit">Unit</label>
+                <div class="field-wrap select-wrap">
+                  <select id="thisUnit"></select>
+                  <span class="select-arrow">▾</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Arrow -->
+          <div class="op-arrow" id="opArrow">
+            <svg viewBox="0 0 40 40" fill="none"><path d="M8 20h24M24 12l8 8-8 8" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+
+          <!-- THAT quantity -->
+          <div class="quantity-block">
+            <p class="qty-label">To (thatQuantity)</p>
+            <div class="qty-fields">
+              <div class="field-group">
+                <label class="field-label" for="thatValue">Value</label>
+                <div class="field-wrap">
+                  <input type="number" id="thatValue" placeholder="e.g. 0" step="any" required />
+                </div>
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="thatUnit">Unit</label>
+                <div class="field-wrap select-wrap">
+                  <select id="thatUnit"></select>
+                  <span class="select-arrow">▾</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-error hidden" id="convert-error" role="alert"></div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-primary" id="convertBtn">
+            <span class="btn-text" id="convertBtnText">Convert</span>
+            <span class="btn-loader hidden"></span>
+          </button>
+          <button type="button" class="btn-ghost" onclick="Dashboard.resetForm()">Reset</button>
+        </div>
+      </form>
+
+      <!-- Result panel -->
+      <div class="result-panel hidden" id="resultPanel">
+        <div class="result-header">
+          <span class="result-label">Result</span>
+          <button class="result-close" onclick="Dashboard.closeResult()">✕</button>
+        </div>
+        <div class="result-body" id="resultBody">
+          <!-- filled dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- History log -->
+    <div class="history-section">
+      <div class="history-header">
+        <h3 class="history-title">Recent Operations</h3>
+        <button class="btn-ghost small" onclick="Dashboard.clearHistory()">Clear</button>
+      </div>
+      <div class="history-list" id="historyList">
+        <p class="history-empty mono">No operations yet. Run a calculation above.</p>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Sidebar overlay for mobile -->
+  <div class="sidebar-overlay hidden" id="sidebarOverlay" onclick="Dashboard.toggleSidebar()"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -13,14 +13,17 @@
   <div class="bg-orb orb-1"></div>
   <div class="bg-orb orb-2"></div>
 
-  <!-- Sidebar Nav -->
+  <!-- ══════════════════════════════════════════════════════
+       SIDEBAR
+  ══════════════════════════════════════════════════════ -->
   <aside class="sidebar" id="sidebar">
+
     <div class="sidebar-brand">
       <div class="brand-icon small">
-        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="4" y="4" width="14" height="14" rx="2" fill="var(--accent)"/>
-          <rect x="22" y="4" width="14" height="14" rx="2" fill="var(--accent)" opacity="0.5"/>
-          <rect x="4" y="22" width="14" height="14" rx="2" fill="var(--accent)" opacity="0.5"/>
+        <svg viewBox="0 0 40 40" fill="none">
+          <rect x="4"  y="4"  width="14" height="14" rx="2" fill="var(--accent)"/>
+          <rect x="22" y="4"  width="14" height="14" rx="2" fill="var(--accent)" opacity="0.5"/>
+          <rect x="4"  y="22" width="14" height="14" rx="2" fill="var(--accent)" opacity="0.5"/>
           <rect x="22" y="22" width="14" height="14" rx="2" fill="var(--accent)"/>
         </svg>
       </div>
@@ -29,83 +32,141 @@
 
     <nav class="sidebar-nav">
       <p class="nav-label">Operations</p>
-      <button class="nav-item active" data-op="convert" onclick="Dashboard.setOperation('convert', this)">
-        <svg viewBox="0 0 20 20" fill="none"><path d="M4 10h12M12 6l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+
+      <!-- Convert — single input mode -->
+      <button class="nav-item active" data-op="convert"
+              onclick="Dashboard.setOperation('convert', this)">
+        <svg viewBox="0 0 20 20" fill="none">
+          <path d="M4 10h12M12 6l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
         Convert
       </button>
-      <button class="nav-item" data-op="add" onclick="Dashboard.setOperation('add', this)">
-        <svg viewBox="0 0 20 20" fill="none"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+
+      <!-- Add — two inputs -->
+      <button class="nav-item" data-op="add"
+              onclick="Dashboard.setOperation('add', this)">
+        <svg viewBox="0 0 20 20" fill="none">
+          <path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
         Add
       </button>
-      <button class="nav-item" data-op="subtract" onclick="Dashboard.setOperation('subtract', this)">
-        <svg viewBox="0 0 20 20" fill="none"><path d="M4 10h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+
+      <!-- Subtract — two inputs -->
+      <button class="nav-item" data-op="subtract"
+              onclick="Dashboard.setOperation('subtract', this)">
+        <svg viewBox="0 0 20 20" fill="none">
+          <path d="M4 10h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
         Subtract
       </button>
-      <button class="nav-item" data-op="compare" onclick="Dashboard.setOperation('compare', this)">
-        <svg viewBox="0 0 20 20" fill="none"><path d="M4 6h12M4 10h8M4 14h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+
+      <!-- Compare — two inputs -->
+      <button class="nav-item" data-op="compare"
+              onclick="Dashboard.setOperation('compare', this)">
+        <svg viewBox="0 0 20 20" fill="none">
+          <path d="M4 6h12M4 10h8M4 14h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
         Compare
       </button>
-      <button class="nav-item" data-op="divide" onclick="Dashboard.setOperation('divide', this)">
-        <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="6" r="1.2" fill="currentColor"/><circle cx="10" cy="14" r="1.2" fill="currentColor"/><path d="M4 10h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+
+      <!-- Divide — two inputs -->
+      <button class="nav-item" data-op="divide"
+              onclick="Dashboard.setOperation('divide', this)">
+        <svg viewBox="0 0 20 20" fill="none">
+          <circle cx="10" cy="6"  r="1.2" fill="currentColor"/>
+          <circle cx="10" cy="14" r="1.2" fill="currentColor"/>
+          <path d="M4 10h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
         Divide
       </button>
     </nav>
 
+    <!-- User info + logout -->
     <div class="sidebar-footer">
       <div class="user-chip">
+        <!-- Google profile photo (hidden unless OAuth login) -->
+        <img class="user-avatar-img hidden" id="userAvatarImg"
+             alt="Profile" referrerpolicy="no-referrer" />
+        <!-- Initial-letter fallback -->
         <span class="user-avatar" id="userAvatar">U</span>
-        <span class="user-email mono" id="userEmail">user@app.com</span>
+        <div class="user-meta">
+          <span class="user-name"       id="userName">User</span>
+          <span class="user-email mono" id="userEmail">user@app.com</span>
+        </div>
       </div>
+
+      <!-- "Signed in with Google" vs "Password" -->
+      <div class="login-source-badge hidden" id="loginSourceBadge"></div>
+
       <button class="btn-logout" onclick="Dashboard.logout()" title="Logout">
-        <svg viewBox="0 0 20 20" fill="none"><path d="M13 15l4-5-4-5M17 10H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M7 4H4a1 1 0 00-1 1v10a1 1 0 001 1h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <svg viewBox="0 0 20 20" fill="none">
+          <path d="M13 15l4-5-4-5M17 10H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M7 4H4a1 1 0 00-1 1v10a1 1 0 001 1h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
         Logout
       </button>
     </div>
   </aside>
 
-  <!-- Mobile header -->
+  <!-- ══════════════════════════════════════════════════════
+       MOBILE HEADER
+  ══════════════════════════════════════════════════════ -->
   <header class="mobile-header">
-    <button class="hamburger" onclick="Dashboard.toggleSidebar()" aria-label="Menu">
+    <button class="hamburger" onclick="Dashboard.toggleSidebar()" aria-label="Open menu">
       <span></span><span></span><span></span>
     </button>
     <span class="brand-name">QuantiMeasure</span>
-    <button class="btn-logout-sm" onclick="Dashboard.logout()">
-      <svg viewBox="0 0 20 20" fill="none"><path d="M13 15l4-5-4-5M17 10H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    <button class="btn-logout-sm" onclick="Dashboard.logout()" title="Logout">
+      <svg viewBox="0 0 20 20" fill="none">
+        <path d="M13 15l4-5-4-5M17 10H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
     </button>
   </header>
 
-  <!-- Main content -->
+  <!-- ══════════════════════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════════════════════ -->
   <main class="dashboard-main">
 
     <!-- Page header -->
     <div class="page-header">
       <div>
         <h2 class="page-title" id="pageTitle">Unit Conversion</h2>
-        <p class="page-desc" id="pageDesc">Convert a value from one unit to its equivalent in another</p>
+        <p class="page-desc"  id="pageDesc">Enter a value and choose its source unit — then pick the target unit to convert into.</p>
       </div>
       <div class="op-badge" id="opBadge">convert</div>
     </div>
 
-    <!-- Conversion card -->
+    <!-- ── Converter Card ─────────────────────────────────── -->
     <div class="converter-card">
       <form class="converter-form" id="converterForm" novalidate>
 
-        <!-- Measurement Type -->
+        <!-- Measurement type pills -->
         <div class="type-selector">
           <p class="field-label">Measurement Type</p>
-          <div class="type-pills" id="typePills">
-            <button type="button" class="pill active" data-type="LengthUnit" onclick="Dashboard.selectType('LengthUnit', this)">📏 Length</button>
-            <button type="button" class="pill" data-type="TemperatureUnit" onclick="Dashboard.selectType('TemperatureUnit', this)">🌡️ Temperature</button>
-            <button type="button" class="pill" data-type="VolumeUnit" onclick="Dashboard.selectType('VolumeUnit', this)">🧪 Volume</button>
-            <button type="button" class="pill" data-type="WeightUnit" onclick="Dashboard.selectType('WeightUnit', this)">⚖️ Weight</button>
+          <div class="type-pills">
+            <button type="button" class="pill active" data-type="LengthUnit"
+                    onclick="Dashboard.selectType('LengthUnit', this)">📏 Length</button>
+            <button type="button" class="pill" data-type="TemperatureUnit"
+                    onclick="Dashboard.selectType('TemperatureUnit', this)">🌡️ Temperature</button>
+            <button type="button" class="pill" data-type="VolumeUnit"
+                    onclick="Dashboard.selectType('VolumeUnit', this)">🧪 Volume</button>
+            <button type="button" class="pill" data-type="WeightUnit"
+                    onclick="Dashboard.selectType('WeightUnit', this)">⚖️ Weight</button>
           </div>
         </div>
 
-        <!-- Quantity inputs side by side -->
-        <div class="quantities-row">
+        <!--
+          ─────────────────────────────────────────────────────
+          TWO-QUANTITY ROW
+          Shown for: Add · Subtract · Compare · Divide
+          Hidden for: Convert (see targetUnitWrap below)
+          ─────────────────────────────────────────────────────
+        -->
+        <div class="quantities-row" id="quantitiesRow">
 
-          <!-- THIS quantity -->
-          <div class="quantity-block">
+          <!-- FROM block (always visible) -->
+          <div class="quantity-block" id="thisBlock">
             <p class="qty-label">From (thisQuantity)</p>
             <div class="qty-fields">
               <div class="field-group">
@@ -124,13 +185,16 @@
             </div>
           </div>
 
-          <!-- Arrow -->
+          <!-- Operator arrow (hidden in Convert mode) -->
           <div class="op-arrow" id="opArrow">
-            <svg viewBox="0 0 40 40" fill="none"><path d="M8 20h24M24 12l8 8-8 8" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg viewBox="0 0 40 40" fill="none">
+              <path d="M8 20h24M24 12l8 8-8 8" stroke="var(--accent)" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
           </div>
 
-          <!-- THAT quantity -->
-          <div class="quantity-block">
+          <!-- TO block (hidden in Convert mode) -->
+          <div class="quantity-block" id="thatBlock">
             <p class="qty-label">To (thatQuantity)</p>
             <div class="qty-fields">
               <div class="field-group">
@@ -148,7 +212,64 @@
               </div>
             </div>
           </div>
-        </div>
+
+        </div><!-- /quantities-row -->
+
+        <!--
+          ─────────────────────────────────────────────────────
+          CONVERT-ONLY PANEL
+          Shown only when operation = "convert".
+          The user provides one value + source unit above, and
+          chooses the target unit here.  No second value needed.
+          ─────────────────────────────────────────────────────
+        -->
+        <div class="target-unit-wrap hidden" id="targetUnitWrap">
+
+          <!-- Single-input "From" block for Convert mode -->
+          <div class="quantity-block convert-from-block">
+            <p class="qty-label">Input (thisQuantity)</p>
+            <div class="qty-fields">
+              <div class="field-group">
+                <label class="field-label" for="convertValue">Value</label>
+                <div class="field-wrap">
+                  <input type="number" id="convertValue" placeholder="e.g. 100"
+                         step="any" required />
+                </div>
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="convertFromUnit">From Unit</label>
+                <div class="field-wrap select-wrap">
+                  <select id="convertFromUnit"></select>
+                  <span class="select-arrow">▾</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Arrow -->
+          <div class="convert-arrow-center">
+            <svg viewBox="0 0 40 40" fill="none">
+              <path d="M8 20h24M24 12l8 8-8 8" stroke="var(--accent)" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+
+          <!-- Target unit picker -->
+          <div class="quantity-block convert-to-block">
+            <p class="qty-label">Target Unit</p>
+            <div class="qty-fields">
+              <div class="field-group">
+                <label class="field-label" for="targetUnit">Convert To</label>
+                <div class="field-wrap select-wrap">
+                  <select id="targetUnit"></select>
+                  <span class="select-arrow">▾</span>
+                </div>
+              </div>
+            </div>
+            <p class="convert-hint mono">Result is calculated automatically — no second value needed.</p>
+          </div>
+
+        </div><!-- /targetUnitWrap -->
 
         <div class="form-error hidden" id="convert-error" role="alert"></div>
 
@@ -159,21 +280,21 @@
           </button>
           <button type="button" class="btn-ghost" onclick="Dashboard.resetForm()">Reset</button>
         </div>
+
       </form>
 
-      <!-- Result panel -->
+      <!-- Result panel (hidden until a result arrives) -->
       <div class="result-panel hidden" id="resultPanel">
         <div class="result-header">
           <span class="result-label">Result</span>
           <button class="result-close" onclick="Dashboard.closeResult()">✕</button>
         </div>
-        <div class="result-body" id="resultBody">
-          <!-- filled dynamically -->
-        </div>
+        <div class="result-body" id="resultBody"></div>
       </div>
-    </div>
 
-    <!-- History log -->
+    </div><!-- /converter-card -->
+
+    <!-- ── Operation History ──────────────────────────────── -->
     <div class="history-section">
       <div class="history-header">
         <h3 class="history-title">Recent Operations</h3>
@@ -186,9 +307,10 @@
 
   </main>
 
-  <!-- Sidebar overlay for mobile -->
-  <div class="sidebar-overlay hidden" id="sidebarOverlay" onclick="Dashboard.toggleSidebar()"></div>
+  <!-- Mobile sidebar backdrop -->
+  <div class="sidebar-overlay hidden" id="sidebarOverlay"
+       onclick="Dashboard.toggleSidebar()"></div>
 
-  <script src="script.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>

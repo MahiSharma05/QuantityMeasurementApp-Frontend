@@ -1,0 +1,105 @@
+<div class="bg-grid"></div>
+<div class="bg-orb orb-1"></div>
+<div class="bg-orb orb-2"></div>
+
+<!-- ══════════════ SIDEBAR ══════════════ -->
+<aside class="sidebar" [class.open]="sidebarOpen" id="sidebar">
+
+  <div class="sidebar-brand">
+    <div class="brand-icon small">
+      <svg viewBox="0 0 40 40" fill="none">
+        <rect x="4"  y="4"  width="14" height="14" rx="2" fill="var(--accent)"/>
+        <rect x="22" y="4"  width="14" height="14" rx="2" fill="var(--accent)" opacity="0.5"/>
+        <rect x="4"  y="22" width="14" height="14" rx="2" fill="var(--accent)" opacity="0.5"/>
+        <rect x="22" y="22" width="14" height="14" rx="2" fill="var(--accent)"/>
+      </svg>
+    </div>
+    <span class="brand-name">QuantiMeasure</span>
+  </div>
+
+  <nav class="sidebar-nav">
+    <p class="nav-label">Operations</p>
+
+    <button class="nav-item" [class.active]="currentOp === 'convert'" (click)="setOperation('convert')">
+      <svg viewBox="0 0 20 20" fill="none">
+        <path d="M4 10h12M12 6l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      Convert
+    </button>
+
+    <button class="nav-item" [class.active]="currentOp === 'add'" (click)="setOperation('add')">
+      <svg viewBox="0 0 20 20" fill="none">
+        <path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      Add
+    </button>
+
+    <button class="nav-item" [class.active]="currentOp === 'subtract'" (click)="setOperation('subtract')">
+      <svg viewBox="0 0 20 20" fill="none">
+        <path d="M4 10h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      Subtract
+    </button>
+
+    <button class="nav-item" [class.active]="currentOp === 'compare'" (click)="setOperation('compare')">
+      <svg viewBox="0 0 20 20" fill="none">
+        <path d="M4 6h12M4 10h8M4 14h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      Compare
+    </button>
+
+    <button class="nav-item" [class.active]="currentOp === 'divide'" (click)="setOperation('divide')">
+      <svg viewBox="0 0 20 20" fill="none">
+        <circle cx="10" cy="6"  r="1.2" fill="currentColor"/>
+        <circle cx="10" cy="14" r="1.2" fill="currentColor"/>
+        <path d="M4 10h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      Divide
+    </button>
+  </nav>
+
+  <!-- User chip + logout -->
+  <div class="sidebar-footer">
+    <div class="user-chip">
+      <img *ngIf="userAvatar" class="user-avatar-img" [src]="userAvatar" alt="Profile" referrerpolicy="no-referrer"/>
+      <span *ngIf="!userAvatar" class="user-avatar">{{ userInitial }}</span>
+      <div class="user-meta">
+        <span class="user-name">{{ userName }}</span>
+        <span class="user-email mono">{{ userEmail }}</span>
+      </div>
+    </div>
+
+    <div class="login-source-badge" [class.badge-google]="loginSource === 'google'">
+      {{ loginSource === 'google' ? '🔵 Signed in with Google' : '🔑 Signed in with Password' }}
+    </div>
+
+    <button class="btn-logout" (click)="logout()">
+      <svg viewBox="0 0 20 20" fill="none">
+        <path d="M13 15l4-5-4-5M17 10H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M7 4H4a1 1 0 00-1 1v10a1 1 0 001 1h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      Logout
+    </button>
+  </div>
+</aside>
+
+<!-- ══════════════ MOBILE HEADER ══════════════ -->
+<header class="mobile-header">
+  <button class="hamburger" (click)="toggleSidebar()" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+  <span class="brand-name">QuantiMeasure</span>
+  <button class="btn-logout-sm" (click)="logout()" title="Logout">
+    <svg viewBox="0 0 20 20" fill="none">
+      <path d="M13 15l4-5-4-5M17 10H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+  </button>
+</header>
+
+<!-- ══════════════ MAIN CONTENT ══════════════ -->
+<main class="dashboard-main">
+  <router-outlet />
+</main>
+
+<!-- Mobile sidebar backdrop -->
+<div class="sidebar-overlay" [class.hidden]="!sidebarOpen" (click)="toggleSidebar()"></div>

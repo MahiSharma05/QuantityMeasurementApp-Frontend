@@ -1,0 +1,235 @@
+<!-- Page header -->
+<div class="page-header">
+  <div>
+    <h2 class="page-title">{{ opMeta[currentOp].label }}</h2>
+    <p class="page-desc">{{ opMeta[currentOp].desc }}</p>
+  </div>
+  <div class="op-badge">{{ currentOp }}</div>
+</div>
+
+<!-- ── Converter Card ─────────────────────────────────────── -->
+<div class="converter-card">
+  <form class="converter-form" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+
+    <!-- Measurement type pills -->
+    <div class="type-selector">
+      <p class="field-label">Measurement Type</p>
+      <div class="type-pills">
+        <button
+          *ngFor="let mt of measurementTypes"
+          type="button"
+          class="pill"
+          [class.active]="currentType === mt.type"
+          (click)="selectType(mt.type)">
+          {{ mt.emoji }} {{ mt.label }}
+        </button>
+      </div>
+    </div>
+
+    <!-- ══ CONVERT MODE (single input) ══ -->
+    <ng-container *ngIf="isSingleInput">
+      <div class="target-unit-wrap">
+
+        <!-- From block -->
+        <div class="quantity-block convert-from-block">
+          <p class="qty-label">Input (thisQuantity)</p>
+          <div class="qty-fields">
+            <div class="field-group">
+              <label class="field-label" for="convertValue">Value</label>
+              <div class="field-wrap" [class.field-error]="convertValue.invalid && convertValue.touched">
+                <input type="number" id="convertValue" formControlName="convertValue"
+                       placeholder="e.g. 100" step="any" />
+              </div>
+              <span class="field-hint" *ngIf="convertValue.invalid && convertValue.touched">Enter a valid number.</span>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="convertFromUnit">From Unit</label>
+              <div class="field-wrap select-wrap">
+                <select id="convertFromUnit" formControlName="convertFromUnit">
+                  <option *ngFor="let u of availableUnits" [value]="u">{{ u }}</option>
+                </select>
+                <span class="select-arrow">▾</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Arrow -->
+        <div class="convert-arrow-center">
+          <svg viewBox="0 0 40 40" fill="none">
+            <path d="M8 20h24M24 12l8 8-8 8" stroke="var(--accent)" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+
+        <!-- Target unit block -->
+        <div class="quantity-block convert-to-block">
+          <p class="qty-label">Target Unit</p>
+          <div class="qty-fields">
+            <div class="field-group">
+              <label class="field-label" for="targetUnit">Convert To</label>
+              <div class="field-wrap select-wrap">
+                <select id="targetUnit" formControlName="targetUnit">
+                  <option *ngFor="let u of availableUnits" [value]="u">{{ u }}</option>
+                </select>
+                <span class="select-arrow">▾</span>
+              </div>
+            </div>
+          </div>
+          <p class="convert-hint mono">Result is calculated automatically — no second value needed.</p>
+        </div>
+
+      </div>
+    </ng-container>
+
+    <!-- ══ TWO-INPUT MODE ══ -->
+    <ng-container *ngIf="!isSingleInput">
+      <div class="quantities-row">
+
+        <!-- FROM block -->
+        <div class="quantity-block">
+          <p class="qty-label">From (thisQuantity)</p>
+          <div class="qty-fields">
+            <div class="field-group">
+              <label class="field-label" for="thisValue">Value</label>
+              <div class="field-wrap" [class.field-error]="thisValue.invalid && thisValue.touched">
+                <input type="number" id="thisValue" formControlName="thisValue"
+                       placeholder="e.g. 1" step="any" />
+              </div>
+              <span class="field-hint" *ngIf="thisValue.invalid && thisValue.touched">Enter a valid number.</span>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="thisUnit">Unit</label>
+              <div class="field-wrap select-wrap">
+                <select id="thisUnit" formControlName="thisUnit">
+                  <option *ngFor="let u of availableUnits" [value]="u">{{ u }}</option>
+                </select>
+                <span class="select-arrow">▾</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Operator arrow -->
+        <div class="op-arrow">
+          <ng-container [ngSwitch]="currentOp">
+            <svg *ngSwitchCase="'add'" viewBox="0 0 40 40" fill="none">
+              <path d="M20 8v24M8 20h24" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <svg *ngSwitchCase="'subtract'" viewBox="0 0 40 40" fill="none">
+              <path d="M8 20h24" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <svg *ngSwitchCase="'compare'" viewBox="0 0 40 40" fill="none">
+              <path d="M8 15h24M8 25h24" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <svg *ngSwitchCase="'divide'" viewBox="0 0 40 40" fill="none">
+              <circle cx="20" cy="12" r="2.5" fill="var(--accent)"/>
+              <circle cx="20" cy="28" r="2.5" fill="var(--accent)"/>
+              <path d="M8 20h24" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <svg *ngSwitchDefault viewBox="0 0 40 40" fill="none">
+              <path d="M8 20h24M24 12l8 8-8 8" stroke="var(--accent)" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </ng-container>
+        </div>
+
+        <!-- TO block -->
+        <div class="quantity-block">
+          <p class="qty-label">To (thatQuantity)</p>
+          <div class="qty-fields">
+            <div class="field-group">
+              <label class="field-label" for="thatValue">Value</label>
+              <div class="field-wrap" [class.field-error]="thatValue.invalid && thatValue.touched">
+                <input type="number" id="thatValue" formControlName="thatValue"
+                       placeholder="e.g. 0" step="any" />
+              </div>
+              <span class="field-hint" *ngIf="thatValue.invalid && thatValue.touched">Enter a valid number.</span>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="thatUnit">Unit</label>
+              <div class="field-wrap select-wrap">
+                <select id="thatUnit" formControlName="thatUnit">
+                  <option *ngFor="let u of availableUnits" [value]="u">{{ u }}</option>
+                </select>
+                <span class="select-arrow">▾</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </ng-container>
+
+    <!-- Error -->
+    <div class="form-error" *ngIf="errorMsg" role="alert">{{ errorMsg }}</div>
+
+    <!-- Actions -->
+    <div class="form-actions">
+      <button type="submit" class="btn-primary" [disabled]="loading">
+        <span *ngIf="!loading">{{ opMeta[currentOp].label.split(' ')[0] }}</span>
+        <span *ngIf="loading" class="btn-loader"></span>
+      </button>
+      <button type="button" class="btn-ghost" (click)="resetForm()">Reset</button>
+    </div>
+
+  </form>
+
+  <!-- ── Result Panel ─────────────────────────────────────── -->
+  <div class="result-panel" *ngIf="result !== null">
+    <div class="result-header">
+      <span class="result-label">Result</span>
+      <button class="result-close" (click)="closeResult()">✕</button>
+    </div>
+    <div class="result-body">
+
+      <!-- compare → boolean -->
+      <ng-container *ngIf="currentOp === 'compare'">
+        <div class="result-bool" [class.yes]="result === true" [class.no]="result === false">
+          {{ result === true ? '✓ Equal' : '✗ Not Equal' }}
+        </div>
+        <p class="result-meta">
+          The two quantities are {{ result === true ? 'equivalent' : 'not equivalent' }}.
+        </p>
+      </ng-container>
+
+      <!-- divide → number -->
+      <ng-container *ngIf="currentOp === 'divide'">
+        <div>
+          <span class="result-value">{{ (+result!).toFixed(6) }}</span>
+        </div>
+        <p class="result-meta">Ratio (dimensionless)</p>
+      </ng-container>
+
+      <!-- convert / add / subtract → QuantityResult -->
+      <ng-container *ngIf="currentOp !== 'compare' && currentOp !== 'divide' && isQuantityResult(result)">
+        <div>
+          <span class="result-value">{{ formatNumber(asQuantityResult(result).value) }}</span>
+          <span class="result-unit">{{ asQuantityResult(result).unit }}</span>
+        </div>
+        <p class="result-meta">Type: {{ asQuantityResult(result).measurementType }}</p>
+      </ng-container>
+
+    </div>
+  </div>
+
+</div><!-- /converter-card -->
+
+<!-- ── Operation History ──────────────────────────────────── -->
+<div class="history-section">
+  <div class="history-header">
+    <h3 class="history-title">Recent Operations</h3>
+    <button class="btn-ghost small" (click)="clearHistory()">Clear</button>
+  </div>
+  <div class="history-list">
+    <p class="history-empty mono" *ngIf="!historyEntries.length">
+      No operations yet. Run a calculation above.
+    </p>
+    <div class="history-item" *ngFor="let entry of historyEntries">
+      <span class="history-item-op">{{ entry.op }}</span>
+      <span class="history-item-expr">{{ entry.expr }}</span>
+      <span class="history-item-result">{{ entry.result }}</span>
+      <span class="history-item-time">{{ entry.time }}</span>
+    </div>
+  </div>
+</div>

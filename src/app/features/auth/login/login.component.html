@@ -1,0 +1,111 @@
+<div class="bg-grid"></div>
+<div class="bg-orb orb-1"></div>
+<div class="bg-orb orb-2"></div>
+
+<main class="auth-container">
+
+  <!-- Brand -->
+  <header class="auth-brand">
+    <div class="brand-icon">
+      <svg viewBox="0 0 40 40" fill="none">
+        <rect x="4"  y="4"  width="14" height="14" rx="2" fill="var(--accent)"/>
+        <rect x="22" y="4"  width="14" height="14" rx="2" fill="var(--accent)" opacity="0.5"/>
+        <rect x="4"  y="22" width="14" height="14" rx="2" fill="var(--accent)" opacity="0.5"/>
+        <rect x="22" y="22" width="14" height="14" rx="2" fill="var(--accent)"/>
+      </svg>
+    </div>
+    <h1 class="brand-name">QuantiMeasure</h1>
+    <p class="brand-sub">Precision unit conversion platform</p>
+  </header>
+
+  <!-- Google OAuth -->
+  <div class="oauth-section">
+    <button class="btn-google" type="button" [disabled]="googleLoading" (click)="onGoogleLogin()">
+      <span class="google-logo">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+        </svg>
+      </span>
+      <span>{{ googleLoading ? 'Connecting to Google…' : 'Continue with Google' }}</span>
+    </button>
+
+    <div class="auth-divider">
+      <span class="divider-line"></span>
+      <span class="divider-label">or sign in with email</span>
+      <span class="divider-line"></span>
+    </div>
+  </div>
+
+  <!-- Tab nav -->
+  <div class="auth-tabs">
+    <button class="tab-btn active" type="button">Sign In</button>
+    <a class="tab-btn" [routerLink]="['/signup']">Register</a>
+    <span class="tab-indicator"></span>
+  </div>
+
+  <!-- Login form -->
+  <section class="auth-form-wrap">
+    <form class="auth-form" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+
+      <!-- Email -->
+      <div class="field-group">
+        <label class="field-label" for="login-email">Email Address</label>
+        <div class="field-wrap" [class.field-error]="email.invalid && email.touched">
+          <span class="field-icon">
+            <svg viewBox="0 0 20 20" fill="none">
+              <path d="M2 5.5A1.5 1.5 0 013.5 4h13A1.5 1.5 0 0118 5.5v9a1.5 1.5 0 01-1.5 1.5h-13A1.5 1.5 0 012 14.5v-9z" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M2 6l8 5 8-5" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+          </span>
+          <input type="email" id="login-email" formControlName="email"
+                 placeholder="you@example.com" autocomplete="email" />
+        </div>
+        <span class="field-hint" *ngIf="email.invalid && email.touched">
+          {{ email.errors?.['required'] ? 'Email is required.' : 'Enter a valid email.' }}
+        </span>
+      </div>
+
+      <!-- Password -->
+      <div class="field-group">
+        <label class="field-label" for="login-password">Password</label>
+        <div class="field-wrap" [class.field-error]="password.invalid && password.touched">
+          <span class="field-icon">
+            <svg viewBox="0 0 20 20" fill="none">
+              <rect x="4" y="9" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M7 9V6.5a3 3 0 016 0V9" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+          </span>
+          <input [type]="showPassword ? 'text' : 'password'" id="login-password"
+                 formControlName="password" placeholder="••••••••" autocomplete="current-password" />
+          <button type="button" class="toggle-pw" (click)="togglePassword()" aria-label="Toggle password">
+            <svg viewBox="0 0 20 20" fill="none">
+              <path d="M2 10s3-6 8-6 8 6 8 6-3 6-8 6-8-6-8-6z" stroke="currentColor" stroke-width="1.5"/>
+              <circle cx="10" cy="10" r="2.5" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+          </button>
+        </div>
+        <span class="field-hint" *ngIf="password.invalid && password.touched">
+          {{ password.errors?.['required'] ? 'Password is required.' : 'Min. 6 characters.' }}
+        </span>
+      </div>
+
+      <!-- Error banner -->
+      <div class="form-error" *ngIf="errorMessage" role="alert">{{ errorMessage }}</div>
+
+      <!-- Submit -->
+      <button type="submit" class="btn-primary" [disabled]="loading">
+        <span *ngIf="!loading">Sign In</span>
+        <span *ngIf="loading" class="btn-loader"></span>
+      </button>
+
+    </form>
+  </section>
+
+</main>
+
+<footer class="auth-footer">
+  <span class="mono">QuantiMeasure v2.0</span> · JWT + Google OAuth2
+</footer>

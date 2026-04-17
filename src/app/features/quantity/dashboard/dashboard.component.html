@@ -1,0 +1,136 @@
+<div class="layout">
+  <app-sidebar />
+
+  <main class="main-content">
+    <!-- Top bar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1 class="page-title">Dashboard</h1>
+        <span class="page-sub">Overview of your measurement operations</span>
+      </div>
+      <div class="topbar-right">
+        <span class="mono" style="font-size:12px;color:var(--text-muted)">
+          {{ authService.currentEmail() }}
+        </span>
+      </div>
+    </header>
+
+    <div class="page-body page-enter">
+
+      <!-- Loading -->
+      @if (loading()) {
+        <div style="display:flex;justify-content:center;padding:80px 0">
+          <app-spinner [show]="true" [size]="36" label="Loading dashboard…" />
+        </div>
+      } @else {
+
+        <!-- Stats grid -->
+        <div class="stats-grid">
+          @for (stat of stats(); track stat.label) {
+            <div class="stat-card card">
+              <div class="stat-top">
+                <span class="stat-icon">{{ stat.icon }}</span>
+                <span class="stat-label-sm">{{ stat.label }}</span>
+              </div>
+              <div class="stat-value">{{ stat.value }}</div>
+              @if (stat.sub) {
+                <div class="stat-sub">{{ stat.sub }}</div>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Content grid -->
+        <div class="content-grid">
+
+          <!-- Quick actions -->
+          <div class="card section-card">
+            <h3 class="section-title">Quick actions</h3>
+            <div class="actions-list">
+              @for (action of quickActions; track action.path) {
+                <a [routerLink]="action.path" class="action-item">
+                  <div class="action-icon-wrap">{{ action.icon }}</div>
+                  <div class="action-body">
+                    <span class="action-label">{{ action.label }}</span>
+                    <span class="action-desc">{{ action.desc }}</span>
+                  </div>
+                  <span class="action-arrow">→</span>
+                </a>
+              }
+            </div>
+          </div>
+
+          <!-- Operation breakdown -->
+          <div class="card section-card">
+            <h3 class="section-title">Operation breakdown</h3>
+            @if (opCounts().length === 0) {
+              <div class="empty-state">
+                <span>No operations yet</span>
+                <a routerLink="/converter" class="form-link">Start converting →</a>
+              </div>
+            } @else {
+              <div class="breakdown-list">
+                @for (item of opCounts(); track item.type) {
+                  <div class="breakdown-row">
+                    <span class="badge badge-{{ getOpColor(item.type) }}">{{ item.type }}</span>
+                    <div class="breakdown-bar-wrap">
+                      <div class="breakdown-bar"
+                           [style.width.%]="(item.count / history().length) * 100"></div>
+                    </div>
+                    <span class="breakdown-count mono">{{ item.count }}</span>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+
+        </div>
+
+        <!-- Recent operations table -->
+        <div class="card" style="margin-top:24px">
+          <div class="section-header">
+            <h3 class="section-title">Recent operations</h3>
+            <a routerLink="/history" class="btn btn-ghost btn-sm">View all →</a>
+          </div>
+
+          @if (recent().length === 0) {
+            <div class="empty-state">
+              <span>No operations recorded yet</span>
+              <a routerLink="/converter" class="form-link">Make your first conversion →</a>
+            </div>
+          } @else {
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Input</th>
+                    <th>Result</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (row of recent(); track row.id) {
+                    <tr>
+                      <td>
+                        <span class="badge badge-{{ getOpColor(row.operationType) }}">
+                          {{ row.operationType }}
+                        </span>
+                      </td>
+                      <td class="td-primary">{{ row.inputData }}</td>
+                      <td class="td-accent">{{ row.result }}</td>
+                      <td>{{ formatDate(row.timestamp) }}</td>
+                      <td>{{ formatTime(row.timestamp) }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        </div>
+
+      }
+    </div>
+  </main>
+</div>

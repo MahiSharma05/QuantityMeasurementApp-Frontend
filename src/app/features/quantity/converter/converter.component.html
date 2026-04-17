@@ -1,0 +1,258 @@
+<div class="layout">
+  <app-sidebar />
+
+  <main class="main-content">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1 class="page-title">Unit Converter</h1>
+        <span class="page-sub">Convert, add, subtract, compare and divide quantities</span>
+      </div>
+    </header>
+
+    <div class="page-body page-enter">
+
+      <!-- Measurement type selector -->
+      <div class="type-selector">
+        @for (type of measurementTypes; track type) {
+          <button class="type-btn"
+                  [class.type-btn--active]="selectedType() === type"
+                  (click)="setType(type)">
+            <span class="type-icon">{{ typeIcons[type] }}</span>
+            <span>{{ type }}</span>
+          </button>
+        }
+      </div>
+
+      <!-- Operation mode tabs -->
+      <div class="mode-tabs">
+        @for (m of modes(); track m.value) { <!-- ✅ ONLY CHANGE -->
+          <button class="mode-tab"
+                  [class.mode-tab--active]="mode() === m.value"
+                  (click)="setMode(m.value)">
+            <span class="mode-tab-icon">{{ m.icon }}</span>
+            {{ m.label }}
+          </button>
+        }
+      </div>
+
+      <div class="converter-grid">
+
+        <!-- ── SIMPLE CONVERT FORM (mode === 'convert') ──────────────────── -->
+        @if (mode() === 'convert') {
+          <div class="card converter-card">
+            <div class="card-label">Quick Convert</div>
+            <p class="card-hint">Uses <span class="mono">POST /quantity/convert</span> — works for all unit types including temperature</p>
+
+            <form [formGroup]="simpleForm" (ngSubmit)="submitSimple()" novalidate>
+              <div class="convert-row">
+
+                <!-- Value input -->
+                <div class="field-group convert-value-field">
+                  <label>Value</label>
+                  <input type="number" class="field-input" formControlName="value"
+                         placeholder="e.g. 100" step="any" />
+                  @if (simpleForm.get('value')?.invalid && simpleForm.get('value')?.touched) {
+                    <span class="field-error">Value is required</span>
+                  }
+                </div>
+
+                <!-- From unit -->
+                <div class="field-group">
+                  <label>From</label>
+                  <select class="field-input" formControlName="fromUnit">
+                    <option value="" disabled>Select unit</option>
+                    @for (unit of currentUnits(); track unit.value) {
+                      <option [value]="unit.value">{{ unit.label }}</option>
+                    }
+                  </select>
+                  @if (simpleForm.get('fromUnit')?.invalid && simpleForm.get('fromUnit')?.touched) {
+                    <span class="field-error">Select a unit</span>
+                  }
+                </div>
+
+                <!-- Arrow -->
+                <div class="convert-arrow">⇌</div>
+
+                <!-- To unit -->
+                <div class="field-group">
+                  <label>To</label>
+                  <select class="field-input" formControlName="toUnit">
+                    <option value="" disabled>Select unit</option>
+                    @for (unit of currentUnits(); track unit.value) {
+                      <option [value]="unit.value">{{ unit.label }}</option>
+                    }
+                  </select>
+                  @if (simpleForm.get('toUnit')?.invalid && simpleForm.get('toUnit')?.touched) {
+                    <span class="field-error">Select a unit</span>
+                  }
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-lg"
+                      style="margin-top:20px" [disabled]="loading()">
+                @if (loading()) {
+                  <span class="spinner-ring" style="width:16px;height:16px;border-width:2px"></span>
+                  <span>Converting…</span>
+                } @else {
+                  <span>Convert →</span>
+                }
+              </button>
+            </form>
+
+            <!-- Result -->
+            @if (result() && result()!.type === 'convert') {
+              <div class="result-panel result-panel--convert">
+                <div class="result-label">Result</div>
+                <div class="result-equation">
+                  <span class="result-input mono">
+                    {{ formatNumber(asConvert(result()!.data).inputValue) }}
+                    {{ getUnitLabel(asConvert(result()!.data).fromUnit) }}
+                  </span>
+                  <span class="result-eq-sign">=</span>
+                  <span class="result-output mono">
+                    {{ formatNumber(asConvert(result()!.data).result) }}
+                    {{ getUnitLabel(asConvert(result()!.data).toUnit) }}
+                  </span>
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- ── BINARY OPERATION FORM (add/subtract/compare/divide) ────────── -->
+        @if (mode() !== 'convert') {
+          <div class="card converter-card">
+            <div class="card-label">{{ mode() | uppercase }}</div>
+            <p class="card-hint">
+              @if (mode() === 'compare') { Returns true if both quantities are equal after conversion. }
+              @if (mode() === 'divide')  { Returns a dimensionless ratio (no units). }
+              @if (mode() === 'add')     { Adds two quantities. Result in unit of first quantity. }
+              @if (mode() === 'subtract'){ Subtracts second from first. Result in unit of first. }
+            </p>
+
+            <form [formGroup]="binaryForm" (ngSubmit)="submitBinary()" novalidate>
+
+              <!-- First quantity -->
+              <div class="qty-section">
+                <span class="qty-label">First quantity</span>
+                <div class="qty-row">
+                  <div class="field-group qty-value-field">
+                    <label>Value</label>
+                    <input type="number" class="field-input" formControlName="thisValue"
+                           placeholder="e.g. 5" step="any" />
+                  </div>
+                  <div class="field-group qty-unit-field">
+                    <label>Unit</label>
+                    <select class="field-input" formControlName="thisUnit">
+                      <option value="" disabled>Select</option>
+                      @for (unit of currentUnits(); track unit.value) {
+                        <option [value]="unit.value">{{ unit.label }}</option>
+                      }
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Operation symbol -->
+              <div class="op-symbol">
+                @if (mode() === 'add')      { <span>+</span> }
+                @if (mode() === 'subtract') { <span>−</span> }
+                @if (mode() === 'compare')  { <span>=?</span> }
+                @if (mode() === 'divide')   { <span>÷</span> }
+              </div>
+
+              <!-- Second quantity -->
+              <div class="qty-section">
+                <span class="qty-label">Second quantity</span>
+                <div class="qty-row">
+                  <div class="field-group qty-value-field">
+                    <label>Value</label>
+                    <input type="number" class="field-input" formControlName="thatValue"
+                           placeholder="e.g. 12" step="any" />
+                  </div>
+                  <div class="field-group qty-unit-field">
+                    <label>Unit</label>
+                    <select class="field-input" formControlName="thatUnit">
+                      <option value="" disabled>Select</option>
+                      @for (unit of currentUnits(); track unit.value) {
+                        <option [value]="unit.value">{{ unit.label }}</option>
+                      }
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-lg"
+                      style="margin-top:20px" [disabled]="loading()">
+                @if (loading()) {
+                  <span class="spinner-ring" style="width:16px;height:16px;border-width:2px"></span>
+                  <span>Calculating…</span>
+                } @else {
+                  <span>Calculate →</span>
+                }
+              </button>
+            </form>
+
+            <!-- Results -->
+            @if (result()) {
+              <div class="result-panel" [class.result-panel--true]="result()!.type === 'boolean' && asBoolean(result()!.data)"
+                                        [class.result-panel--false]="result()!.type === 'boolean' && !asBoolean(result()!.data)">
+                <div class="result-label">Result</div>
+
+                @if (result()!.type === 'quantity') {
+                  <div class="result-big mono">
+                    {{ formatNumber(asQuantity(result()!.data).value) }}
+                    <span class="result-unit">{{ asQuantity(result()!.data).unit }}</span>
+                  </div>
+                }
+
+                @if (result()!.type === 'boolean') {
+                  <div class="result-bool" [class.result-bool--true]="asBoolean(result()!.data)">
+                    {{ asBoolean(result()!.data) ? '✓ Equal' : '✕ Not equal' }}
+                  </div>
+                }
+
+                @if (result()!.type === 'number') {
+                  <div class="result-big mono">
+                    {{ formatNumber(asNumber(result()!.data)) }}
+                    <span class="result-unit">(ratio)</span>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Right panel — reference table -->
+        <div class="card reference-card">
+          <div class="card-label">{{ selectedType() }} units reference</div>
+          <table class="data-table ref-table">
+            <thead>
+              <tr>
+                <th>Unit</th>
+                <th>Symbol</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (unit of currentUnits(); track unit.value) {
+                <tr>
+                  <td class="td-primary">{{ unit.label }}</td>
+                  <td class="mono" style="color:var(--accent)">{{ unit.value }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+
+          @if (selectedType() === 'TEMPERATURE') {
+            <div class="temp-note alert alert-accent" style="margin-top:16px">
+              <span>⚠</span>
+              <span>Temperature uses exact formulas (°C↔°F), not linear scaling.</span>
+            </div>
+          }
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>

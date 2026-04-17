@@ -1,0 +1,101 @@
+<div class="auth-shell">
+  <!-- Brand panel -->
+  <div class="auth-panel auth-panel--brand">
+    <div class="brand-hero">
+      <div class="brand-mark-lg">Q</div>
+      <h1 class="brand-headline">Join<br>QuantaLab</h1>
+      <p class="brand-tagline">Create an account and start converting units with precision and speed.</p>
+
+      <div class="brand-features">
+        <div class="feature-row">
+          <span class="feature-dot"></span>
+          <span>Free to get started</span>
+        </div>
+        <div class="feature-row">
+          <span class="feature-dot"></span>
+          <span>Full history tracking from day one</span>
+        </div>
+        <div class="feature-row">
+          <span class="feature-dot"></span>
+          <span>All unit types: length, weight, volume, temperature</span>
+        </div>
+      </div>
+    </div>
+    <div class="grid-decoration" aria-hidden="true">
+      @for (i of [1,2,3,4,5,6,7,8,9,10,11,12]; track i) {
+        <div class="grid-cell"></div>
+      }
+    </div>
+  </div>
+
+  <!-- Form panel -->
+  <div class="auth-panel auth-panel--form">
+    <div class="form-card">
+      <div class="form-header">
+        <h2 class="form-title">Create account</h2>
+        <p class="form-subtitle">Fill in your details to get started</p>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+
+        <!-- Email -->
+        <div class="field-group">
+          <label for="email">Email address</label>
+          <input id="email" type="email" class="field-input"
+                 formControlName="email" placeholder="you@example.com" autocomplete="email" />
+          @if (email.invalid && email.touched) {
+            <span class="field-error">
+              {{ email.hasError('required') ? 'Email is required' : 'Enter a valid email' }}
+            </span>
+          }
+        </div>
+
+        <!-- Password -->
+        <div class="field-group" style="margin-top:16px">
+          <label for="password">Password</label>
+          <div class="input-wrap">
+            <input id="password" [type]="showPassword ? 'text' : 'password'"
+                   class="field-input" formControlName="password"
+                   placeholder="Min 6 characters" autocomplete="new-password" />
+            <button type="button" class="input-toggle"
+                    (click)="showPassword = !showPassword">
+              {{ showPassword ? '◑' : '◐' }}
+            </button>
+          </div>
+          @if (password.invalid && password.touched) {
+            <span class="field-error">
+              {{ password.hasError('required') ? 'Password is required' : 'Minimum 6 characters' }}
+            </span>
+          }
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="field-group" style="margin-top:16px">
+          <label for="confirmPassword">Confirm password</label>
+          <input id="confirmPassword" [type]="showPassword ? 'text' : 'password'"
+                 class="field-input" formControlName="confirmPassword"
+                 placeholder="••••••••" autocomplete="new-password" />
+          @if (mismatch) {
+            <span class="field-error">Passwords do not match</span>
+          }
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="btn btn-primary btn-full btn-lg"
+                style="margin-top:24px" [disabled]="loading">
+          @if (loading) {
+            <span class="spinner-ring" style="width:16px;height:16px;border-width:2px"></span>
+            <span>Creating account…</span>
+          } @else {
+            <span>Create account →</span>
+          }
+        </button>
+      </form>
+
+      <div class="form-footer">
+        Already have an account?
+        <a routerLink="/login" class="form-link">Sign in</a>
+      </div>
+    </div>
+  </div>
+</div>

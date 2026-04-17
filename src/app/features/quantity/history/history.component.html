@@ -1,0 +1,146 @@
+<div class="layout">
+  <app-sidebar />
+
+  <main class="main-content">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1 class="page-title">Operation History</h1>
+        <span class="page-sub">Complete log of all measurement operations</span>
+      </div>
+      <div class="topbar-right view-toggle">
+        <button class="btn btn-sm"
+                [class.btn-primary]="viewMode() === 'user'"
+                [class.btn-secondary]="viewMode() !== 'user'"
+                (click)="loadUserHistory()">
+          My history
+        </button>
+        <button class="btn btn-sm"
+                [class.btn-primary]="viewMode() === 'all'"
+                [class.btn-secondary]="viewMode() !== 'all'"
+                (click)="loadAllHistory()">
+          All users
+        </button>
+      </div>
+    </header>
+
+    <div class="page-body page-enter">
+
+      @if (loading()) {
+        <div style="display:flex;justify-content:center;padding:80px 0">
+          <app-spinner [show]="true" [size]="36" label="Loading history…" />
+        </div>
+      } @else {
+
+        <!-- Chart + summary row -->
+        <div class="history-top-grid">
+
+          <!-- Bar chart -->
+          <div class="card chart-card">
+            <div class="section-header">
+              <h3 class="section-title">Operations by type</h3>
+              <span class="mono" style="font-size:12px;color:var(--text-muted)">
+                {{ allItems().length }} total
+              </span>
+            </div>
+            @if (allItems().length > 0) {
+              <div class="chart-wrap">
+                <canvas #chartCanvas class="bar-chart"></canvas>
+              </div>
+            } @else {
+              <div class="empty-state">No data to display yet</div>
+            }
+          </div>
+
+          <!-- Stats column -->
+          <div class="stats-col">
+            <div class="card mini-stat">
+              <div class="stat-icon-lg">∑</div>
+              <div class="stat-value">{{ allItems().length }}</div>
+              <div class="stat-label">Total operations</div>
+            </div>
+            <div class="card mini-stat">
+              <div class="stat-icon-lg">◈</div>
+              <div class="stat-value">
+                {{ allItems().length > 0 ? (allItems()[0].operationType) : '—' }}
+              </div>
+              <div class="stat-label">Latest type</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Filters -->
+        <div class="filters-bar card">
+          <div class="filter-search">
+            <span class="search-icon">⊕</span>
+            <input type="text" class="search-input" placeholder="Search input, result, operation…"
+                   [(ngModel)]="searchQuery" (input)="onSearch()" />
+          </div>
+
+          <div class="filter-type-group">
+            @for (type of opTypes; track type) {
+              <button class="filter-chip"
+                      [class.filter-chip--active]="filterType === type"
+                      (click)="filterType = type; onFilterChange()">
+                {{ type }}
+              </button>
+            }
+          </div>
+
+          <span class="filter-count mono">
+            {{ filtered().length }} / {{ allItems().length }} shown
+          </span>
+        </div>
+
+        <!-- Table -->
+        <div class="card table-card">
+          @if (filtered().length === 0) {
+            <div class="empty-state" style="padding:60px 20px">
+              <span style="font-size:32px">≡</span>
+              <span>No operations match your filters</span>
+            </div>
+          } @else {
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Type</th>
+                    @if (viewMode() === 'all') { <th>User</th> }
+                    <th>Input</th>
+                    <th>Result</th>
+                    <th>Timestamp</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (row of filtered(); track row.id) {
+                    <tr>
+                      <td class="mono" style="color:var(--text-muted)">{{ row.id }}</td>
+                      <td>
+                        <span class="badge badge-{{ getOpColor(row.operationType) }}">
+                          {{ row.operationType }}
+                        </span>
+                      </td>
+                      @if (viewMode() === 'all') {
+                        <td class="mono" style="font-size:12px">{{ row.username }}</td>
+                      }
+                      <td class="td-primary" style="max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+                        {{ row.inputData }}
+                      </td>
+                      <td class="td-accent mono">{{ row.result }}</td>
+                      <td class="mono" style="font-size:12px;white-space:nowrap">
+                        {{ formatDateTime(row.timestamp) }}
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        </div>
+
+      }
+    </div>
+  </main>
+</div>

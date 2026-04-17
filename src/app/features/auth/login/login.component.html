@@ -1,0 +1,144 @@
+<div class="auth-shell">
+  <!-- Left panel — branding -->
+  <div class="auth-panel auth-panel--brand">
+    <div class="brand-hero">
+      <div class="brand-mark-lg">Q</div>
+      <h1 class="brand-headline">QuantaLab</h1>
+      <p class="brand-tagline">
+        Measurement Intelligence<br />for engineers who demand precision.
+      </p>
+
+      <div class="brand-features">
+        <div class="feature-row">
+          <span class="feature-dot"></span>
+          <span>Unit conversion across all measurement types</span>
+        </div>
+        <div class="feature-row">
+          <span class="feature-dot"></span>
+          <span>Full operation history &amp; audit trail</span>
+        </div>
+        <div class="feature-row">
+          <span class="feature-dot"></span>
+          <span>JWT-secured microservices backend</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Decorative grid -->
+    <div class="grid-decoration" aria-hidden="true">
+      @for (i of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]; track i) {
+        <div class="grid-cell"></div>
+      }
+    </div>
+  </div>
+
+  <!-- Right panel — form -->
+  <div class="auth-panel auth-panel--form">
+    <div class="form-card">
+      <div class="form-header">
+        <h2 class="form-title">Sign in</h2>
+        <p class="form-subtitle">Enter your credentials to continue</p>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+
+        <!-- Email -->
+        <div class="field-group">
+          <label for="email">Email address</label>
+          <input
+            id="email"
+            type="email"
+            class="field-input"
+            formControlName="email"
+            placeholder="you@example.com"
+            autocomplete="email"
+          />
+          @if (email.invalid && email.touched) {
+            <span class="field-error">
+              {{
+                email.hasError("required")
+                  ? "Email is required"
+                  : "Enter a valid email address"
+              }}
+            </span>
+          }
+        </div>
+
+        <!-- Password -->
+        <div class="field-group" style="margin-top: 16px">
+          <label for="password">Password</label>
+          <div class="input-wrap">
+            <input
+              id="password"
+              [type]="showPassword ? 'text' : 'password'"
+              class="field-input"
+              formControlName="password"
+              placeholder="••••••••"
+              autocomplete="current-password"
+            />
+            <button
+              type="button"
+              class="input-toggle"
+              (click)="showPassword = !showPassword"
+              [title]="showPassword ? 'Hide password' : 'Show password'"
+            >
+              {{ showPassword ? "◑" : "◐" }}
+            </button>
+          </div>
+          @if (password.invalid && password.touched) {
+            <span class="field-error">
+              {{
+                password.hasError("required")
+                  ? "Password is required"
+                  : "Minimum 6 characters"
+              }}
+            </span>
+          }
+        </div>
+
+        <!-- Submit -->
+        <button
+          type="submit"
+          class="btn btn-primary btn-full btn-lg"
+          style="margin-top: 24px"
+          [disabled]="loading"
+        >
+          @if (loading) {
+            <span
+              class="spinner-ring"
+              style="width: 16px; height: 16px; border-width: 2px"
+            ></span>
+            <span>Authenticating…</span>
+          } @else {
+            <span>Sign in →</span>
+          }
+        </button>
+
+        <!-- 🔥 OR Divider -->
+        <div style="text-align: center; margin: 16px 0; color: #888">
+          ─── OR ───
+        </div>
+
+        <!-- ✅ UPDATED GOOGLE BUTTON (ONLY THIS CHANGED) -->
+        <button
+          type="button"
+          class="btn btn-google btn-full btn-lg"
+          (click)="loginWithGoogle()"
+        >
+          <img
+            src="https://developers.google.com/identity/images/g-logo.png"
+            alt="Google"
+            class="google-icon"
+          />
+          <span>Continue with Google</span>
+        </button>
+
+      </form>
+
+      <div class="form-footer">
+        Don't have an account?
+        <a routerLink="/register" class="form-link">Create one</a>
+      </div>
+    </div>
+  </div>
+</div>

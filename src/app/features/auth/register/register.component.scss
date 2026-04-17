@@ -1,0 +1,21 @@
+/* Additional styles for register — base styles come from login.component.scss */
+.input-wrap {
+  position: relative;
+
+  .field-input { padding-right: 42px; }
+}
+
+.input-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 16px;
+  padding: 0;
+
+  &:hover { color: var(--text-secondary); }
+}
